@@ -18,17 +18,20 @@ int main(int argc, const char *argv[])
 	{
 
 		FILE *fp = fopen("./data.json", "rb");
+		int retval = KS_ERROR;
 
 		if (fp == 0) {
-			return KS_ERROR;
+			return retval;
 		}
 
 		yyset_in(fp, data.scaninfo);
-		yyparse(&data);
+
+		if (yyparse(&data)) retval = KS_ERROR;
+		else                retval = KS_SUCCESS;
 
 		fclose(fp);
 
-		return KS_SUCCESS;
+		return retval;
 
 	}
 
@@ -38,7 +41,7 @@ int main(int argc, const char *argv[])
 
 	} else {
 
-		if (!parse(&data)) {
+		if (parse(&data) == KS_SUCCESS) {
 			printf("person!\n");
 			printf("  name: %s\n", data.person.name);
 			printf("   age: %d\n", data.person.age);
