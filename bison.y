@@ -48,13 +48,25 @@ items: | item TK_SEPI items
 item: key TK_SEPK value {
 	switch (((struct ksData*)pData)->key) {
 		case KSKEY_NAME:
-			strcpy(((struct ksData*)pData)->person.name, ((struct ksData*)pData)->vals);
+			if (((struct ksData*)pData)->type == KSTYPE_STR) {
+				strcpy(((struct ksData*)pData)->person.name, ((struct ksData*)pData)->vals);
+			} else {
+				YYABORT;
+			}
 			break;
 		case KSKEY_AGE:
-			((struct ksData*)pData)->person.age = ((struct ksData*)pData)->vali;
+			if (((struct ksData*)pData)->type == KSTYPE_INT) {
+				((struct ksData*)pData)->person.age = ((struct ksData*)pData)->vali;
+			} else {
+				YYABORT;
+			}
 			break;
 		case KSKEY_BMI:
-			((struct ksData*)pData)->person.bmi = ((struct ksData*)pData)->vald;
+			if (((struct ksData*)pData)->type == KSTYPE_DBL) {
+				((struct ksData*)pData)->person.bmi = ((struct ksData*)pData)->vald;
+			} else {
+				YYABORT;
+			}
 			break;
 	}
 }

@@ -35,6 +35,10 @@ int main(int argc, const char *argv[])
 
 	}
 
+	data.person.name[0] = 0;
+	data.person.age     = 0;
+	data.person.bmi     = 18.0;
+
 	if (yylex_init_extra(&data, &data.scaninfo)) {
 
 		return KS_ERROR;
