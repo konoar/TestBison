@@ -15,7 +15,7 @@ int main(int argc, const char *argv[])
 	struct ksData data;
 	FILE *fp;
 
-	int parse(FILE *fp)
+	int parse()
 	{
 
 		int retval = KS_ERROR;
