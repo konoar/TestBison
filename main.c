@@ -13,14 +13,14 @@ int main(int argc, const char *argv[])
 {
 
 	struct ksData data;
+	FILE *fp;
 
-	int parse()
+	int parse(FILE *fp)
 	{
 
-		FILE *fp = fopen("./data.json", "rb");
 		int retval = KS_ERROR;
 
-		if (fp == 0) {
+		if (yylex_init_extra(&data, &data.scaninfo)) {
 			return retval;
 		}
 
@@ -29,7 +29,7 @@ int main(int argc, const char *argv[])
 		if (yyparse(&data)) retval = KS_ERROR;
 		else                retval = KS_SUCCESS;
 
-		(void) fclose(fp);
+		(void) yylex_destroy(data.scaninfo);
 
 		return retval;
 
@@ -38,29 +38,26 @@ int main(int argc, const char *argv[])
 	data.person.name[0] = 0;
 	data.person.age     = 0;
 	data.person.bmi     = 18.0;
-
+	
 	data.type = data.key = data.flag = 0;
 
-	if (yylex_init_extra(&data, &data.scaninfo)) {
-
+	if (!(fp = fopen("./data.json", "rb"))) {
+		printf("error File Not Found!\n");
 		return KS_ERROR;
-
-	} else {
-
-		if (parse(&data) == KS_SUCCESS) {
-			printf("person!\n");
-			printf("  name: %s\n",	data.person.name);
-			printf("   age: %ld\n",	data.person.age);
-			printf("   bmi: %f\n",	data.person.bmi);
-		} else {
-			printf("error!\n");
-		}
-
-		(void) yylex_destroy(data.scaninfo);
-
-		return KS_SUCCESS;
-
 	}
+
+	if (parse(fp) == KS_SUCCESS) {
+		printf("person!\n");
+		printf("  name: %s\n",	data.person.name);
+		printf("   age: %ld\n",	data.person.age);
+		printf("   bmi: %f\n",	data.person.bmi);
+	} else {
+		printf("error!\n");
+	}
+
+	(void) fclose(fp);
+
+	return KS_SUCCESS;
 
 }
 
