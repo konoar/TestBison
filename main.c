@@ -39,6 +39,8 @@ int main(int argc, const char *argv[])
 	data.person.age     = 0;
 	data.person.bmi     = 18.0;
 
+	data.type = data.key = data.flag = 0;
+
 	if (yylex_init_extra(&data, &data.scaninfo)) {
 
 		return KS_ERROR;
@@ -47,9 +49,11 @@ int main(int argc, const char *argv[])
 
 		if (parse(&data) == KS_SUCCESS) {
 			printf("person!\n");
-			printf("  name: %s\n", data.person.name);
-			printf("   age: %d\n", data.person.age);
-			printf("   bmi: %f\n", data.person.bmi);
+			printf("  name: %s\n",	data.person.name);
+			printf("   age: %ld\n",	data.person.age);
+			printf("   bmi: %f\n",	data.person.bmi);
+		} else {
+			printf("error!\n");
 		}
 
 		yylex_destroy(data.scaninfo);

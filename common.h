@@ -15,13 +15,6 @@
 typedef void* yyscan_t;
 #endif
 
-enum ksKey
-{
-	KSKEY_NAME,
-	KSKEY_AGE,
-	KSKEY_BMI
-};
-
 enum ksType
 {
 	KSTYPE_STR,
@@ -29,7 +22,14 @@ enum ksType
 	KSTYPE_DBL
 };
 
-struct ksJson
+enum ksKey
+{
+	KSKEY_NAME,
+	KSKEY_AGE,
+	KSKEY_BMI
+};
+
+struct ksPerson
 {
 	char			name[128];
 	long			age;
@@ -39,13 +39,14 @@ struct ksJson
 struct ksData
 {
 	yyscan_t		scaninfo;
-	char			strbuff[128];
-	int				key;
+	char			buff[128];
 	int				type;
+	int				key;
+	int				flag;
 	char			vals[128];
 	long			vali;
 	double			vald;
-	struct ksJson	person;
+	struct ksPerson	person;
 };
 
 #endif /* __COMMON_H__ */

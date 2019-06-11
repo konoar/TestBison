@@ -17,15 +17,18 @@
 
 %{
 
-	#include "flex.h"
 	#include "common.h"
+	#include "flex.h"
 	#include "stdio.h"
+
+	#define KSDATA ((struct ksData*)pData)
+	#define KSFLAG(__KEY__) KSDATA->flag |= (1 << KSKEY_##__KEY__)
 
 	int yyerror(struct ksData *pData, const char *msg);
 
 	int yylex(YYSTYPE *yylval_param, void *pData)
 	{
-		return yylex_bare(yylval_param, ((struct ksData*)(pData))->scaninfo);
+		return yylex_bare(yylval_param, KSDATA->scaninfo);
 	}
 
 %}
@@ -42,28 +45,36 @@
 
 %%
 
-object: TK_OBST items TK_OBED
-items: | item TK_SEPI items
+object: TK_OBST items TK_OBED {
+	if (KSDATA->flag != 7) {
+		YYABORT;
+	}
+}
+
+items: | item | item TK_SEPI items
 
 item: key TK_SEPK value {
-	switch (((struct ksData*)pData)->key) {
+	switch (KSDATA->key) {
 		case KSKEY_NAME:
-			if (((struct ksData*)pData)->type == KSTYPE_STR) {
-				strcpy(((struct ksData*)pData)->person.name, ((struct ksData*)pData)->vals);
+			if (KSDATA->type == KSTYPE_STR) {
+				KSFLAG(NAME);
+				strcpy(KSDATA->person.name, KSDATA->vals);
 			} else {
 				YYABORT;
 			}
 			break;
 		case KSKEY_AGE:
-			if (((struct ksData*)pData)->type == KSTYPE_INT) {
-				((struct ksData*)pData)->person.age = ((struct ksData*)pData)->vali;
+			if (KSDATA->type == KSTYPE_INT) {
+				KSFLAG(AGE);
+				KSDATA->person.age = KSDATA->vali;
 			} else {
 				YYABORT;
 			}
 			break;
 		case KSKEY_BMI:
-			if (((struct ksData*)pData)->type == KSTYPE_DBL) {
-				((struct ksData*)pData)->person.bmi = ((struct ksData*)pData)->vald;
+			if (KSDATA->type == KSTYPE_DBL) {
+				KSFLAG(BMI);
+				KSDATA->person.bmi = KSDATA->vald;
 			} else {
 				YYABORT;
 			}
@@ -73,27 +84,27 @@ item: key TK_SEPK value {
 
 key: TK_QUOT TK_WORD TK_QUOT {
 	if (!strcmp($2, "name")) {
-		((struct ksData*)pData)->key = KSKEY_NAME;
+		KSDATA->key = KSKEY_NAME;
 	}
 	else
 	if (!strcmp($2, "age")) {
-		((struct ksData*)pData)->key = KSKEY_AGE;
+		KSDATA->key = KSKEY_AGE;
 	}
 	else
 	if (!strcmp($2, "bmi")) {
-		((struct ksData*)pData)->key = KSKEY_BMI;
+		KSDATA->key = KSKEY_BMI;
 	}
 }
 
 value: TK_QUOT TK_WORD TK_QUOT {
-	((struct ksData*)pData)->type = KSTYPE_STR;
-	strcpy(((struct ksData*)pData)->vals, $2);
+	KSDATA->type = KSTYPE_STR;
+	strcpy(KSDATA->vals, $2);
 } | TK_LONG {
-	((struct ksData*)pData)->type = KSTYPE_INT;
-	((struct ksData*)pData)->vali = $1;
+	KSDATA->type = KSTYPE_INT;
+	KSDATA->vali = $1;
 } | TK_DBLE {
-	((struct ksData*)pData)->type = KSTYPE_DBL;
-	((struct ksData*)pData)->vald = $1;
+	KSDATA->type = KSTYPE_DBL;
+	KSDATA->vald = $1;
 }
 
 %%

@@ -19,25 +19,11 @@
 	struct ksData *pData = yyextra;
 %}
 
-"{" {
-	return TK_OBST;
-}
-
-"}" {
-	return TK_OBED;
-}
-
-":" {
-	return TK_SEPK;
-}
-
-"," {
-	return TK_SEPI;
-}
-
-"\"" {
-	return TK_QUOT;
-}
+"{"		{ return TK_OBST; }
+"}"		{ return TK_OBED; }
+":"		{ return TK_SEPK; }
+","		{ return TK_SEPI; }
+"\""	{ return TK_QUOT; }
 
 [0-9]+\.[0-9]+ {
 
@@ -55,16 +41,14 @@
 
 [a-zA-Z0-9]+ {
 
-	yylval->s = pData->strbuff;
+	yylval->s = pData->buff;
 	strcpy(yylval->s, yytext);
-
 	return TK_WORD;
 
 }
 
-. {}
-
-"\n" {}
+.		{}
+"\n"	{}
 
 %%
 
