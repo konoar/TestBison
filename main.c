@@ -29,7 +29,7 @@ int main(int argc, const char *argv[])
 		if (yyparse(&data)) retval = KS_ERROR;
 		else                retval = KS_SUCCESS;
 
-		fclose(fp);
+		(void) fclose(fp);
 
 		return retval;
 
@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
 			printf("error!\n");
 		}
 
-		yylex_destroy(data.scaninfo);
+		(void) yylex_destroy(data.scaninfo);
 
 		return KS_SUCCESS;
 
