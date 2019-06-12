@@ -12,8 +12,9 @@
 int main(int argc, const char *argv[])
 {
 
-	struct ksData data;
 	FILE *fp;
+	struct ksData data;
+	int retval = KS_ERROR;
 
 	int parse()
 	{
@@ -43,10 +44,10 @@ int main(int argc, const char *argv[])
 
 	if (!(fp = fopen("./data.json", "rb"))) {
 		printf("error File Not Found!\n");
-		return KS_ERROR;
+		return retval;
 	}
 
-	if (parse(fp) == KS_SUCCESS) {
+	if ((retval = parse()) == KS_SUCCESS) {
 		printf("person!\n");
 		printf("  name: %s\n",	data.person.name);
 		printf("   age: %ld\n",	data.person.age);
@@ -57,7 +58,7 @@ int main(int argc, const char *argv[])
 
 	(void) fclose(fp);
 
-	return KS_SUCCESS;
+	return retval;
 
 }
 
